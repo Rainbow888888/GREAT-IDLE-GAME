@@ -1,0 +1,13 @@
+# Нормализация концов строк. Unity YAML и C# — текст.
+* text=auto
+*.cs text diff=csharp
+*.unity text eol=lf
+*.prefab text eol=lf
+*.asset text eol=lf
+*.meta text eol=lf
+*.png binary
+*.aseprite binary
+*.ase binary
+*.wav binary
+*.ogg binary
+# Git LFS включается на этапе 6 ДО первого коммита арта (см. docs/ART_PIPELINE.md)
