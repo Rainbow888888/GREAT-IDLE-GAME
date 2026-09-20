@@ -6,8 +6,8 @@
 ## Где мы
 
 Текущий этап: **2 — каркас Unity-проекта**.
-Этап 1 закрыт коммитом `945b379`. Текущая задача: **S2.1 — рабочий Unity-проект
-и импорт run1.json**. Unity-кода пока нет.
+Этап 1 закрыт коммитом `945b379`. S2.1 принята и запушена (`08e627e`).
+Текущая задача: **S2.2 — URP 2D, bootstrap-сцена и Windows build**.
 
 ## Проверенное состояние
 
@@ -17,6 +17,8 @@
   prestige-повтор 240 сек, ревью Codex `ACCEPT`.
 - Unity `6000.3.24f1` установлена по `O:\UNITY\6000.3.24f1\Editor\Unity.exe`.
 - Unity CLI `1.0.0-beta.10`; доступен шаблон `com.unity.template.2d`.
+- S2.1: Unity EditMode 1/1, Python 14/14; JSON читается через Resources/JsonUtility.
+- Rollback перед URP: локальный и удалённый HEAD `08e627e`.
 
 ## Зафиксированный цикл забега I
 
@@ -29,21 +31,22 @@ Codex сразу коммитит и пушит принятую задачу (D
 
 ## Следующий результат
 
-Kimi выполняет `docs/tasks/S2.1-unity-project-shell.md`: безопасно создаёт Unity-проект
-в уже существующем репозитории и доказывает одним EditMode-тестом, что игровой
-`run1.json` реально читается через Unity.
+Kimi выполняет `docs/tasks/S2.2-urp-bootstrap-build.md`: точечно устанавливает URP,
+создаёт 2D renderer и одну bootstrap-сцену через Unity API, запускает 2 EditMode-теста
+и собирает Windows `.exe` с текстом `GREAT IDLE GAME`.
 
 После реализации Codex проверяет фактические файлы и пишет
-`docs/reviews/S2.1-unity-project-shell/codex.md`. Claude на этой задаче не обязателен.
+`docs/reviews/S2.2-urp-bootstrap-build/codex.md`; затем Claude критикует гейт этапа 2.
+Этап закрывается только после визуального подтверждения владельца.
 
 ## Не делать сейчас
 
-URP, сцена, UI, арт, Windows build, экономика, второй забег и новые системы.
+Экономика, клики, рабочие, здания, игровой UI, арт, анимации и новые системы.
 
 ## Порядок чтения
 
 1. `AGENTS.md`.
-2. `docs/tasks/S2.1-unity-project-shell.md`.
+2. `docs/tasks/S2.2-urp-bootstrap-build.md`.
 3. `docs/UNITY_PITFALLS.md`.
 4. `PROJECT_CONTRACT.md` §7.
 
@@ -51,9 +54,9 @@ URP, сцена, UI, арт, Windows build, экономика, второй з�
 
 ```text
 Проект GREAT-IDLE-GAME, папка O:\AI\GREAT-IDLE-GAME.
-Выполни только docs/tasks/S2.1-unity-project-shell.md. Сначала проверь задачу на
-противоречия и наличие лицензии Unity, затем реализуй, запусти все проверки и покажи
-фактический diff. Документы не меняй и не коммить.
+Выполни только docs/tasks/S2.2-urp-bootstrap-build.md. Сначала проверь preflight и
+rollback, затем выполняй package phase и setup phase раздельно. Запусти тесты, mutation-check
+и Windows build, покажи фактический diff и логи. Документы не меняй и не коммить.
 ```
 
-Название следующего чата: `🟡 S2.1 — Unity-проект читает баланс`
+Название следующего чата: `🟡 S2.2 — первый запускаемый build`
