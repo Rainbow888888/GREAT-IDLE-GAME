@@ -1,0 +1,24 @@
+{
+  "steps": [
+    { "kind": "worker", "targetCount": 1, "category": "routine" },
+    { "kind": "worker", "targetCount": 5, "category": "routine" },
+    { "kind": "building", "id": "salvage_rig", "targetLevel": 1, "category": "unlock" },
+    { "kind": "building", "id": "crew_quarters", "targetLevel": 1, "category": "unlock" },
+    { "kind": "worker", "targetCount": 10, "category": "routine" },
+    { "kind": "building", "id": "workshop", "targetLevel": 1, "category": "unlock" },
+    { "kind": "fixed", "id": "auto_delivery" },
+    { "kind": "building", "id": "salvage_rig", "targetLevel": 2, "category": "routine" },
+    { "kind": "fixed", "id": "tool_boost" },
+    { "kind": "building", "id": "crew_quarters", "targetLevel": 2, "category": "visual" },
+    { "kind": "fixed", "id": "ship_stirs" },
+    { "kind": "building", "id": "workshop", "targetLevel": 2, "category": "routine" },
+    { "kind": "fixed", "id": "base_expands" },
+    { "kind": "worker", "targetCount": 20, "category": "routine" },
+    { "kind": "building", "id": "guard_post", "targetLevel": 1, "category": "unlock" },
+    { "kind": "building", "id": "salvage_rig", "targetLevel": 3, "category": "mechanical" },
+    { "kind": "fixed", "id": "first_threat" },
+    { "kind": "building", "id": "guard_post", "targetLevel": 2, "category": "routine" },
+    { "kind": "fixed", "id": "hull_breach" },
+    { "kind": "fixed", "id": "emp" }
+  ]
+}

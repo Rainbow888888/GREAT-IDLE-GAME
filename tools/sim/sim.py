@@ -70,6 +70,7 @@ class Config:
     worker: WorkerConfig
     buildings: dict[str, BuildingConfig]
     fixed_purchases: dict[str, FixedPurchaseConfig]
+    prestige_multiplier: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -128,6 +129,7 @@ class SimulationResult:
     elapsed_seconds: float
     events: list[PurchaseEvent]
     state: State
+    max_meaningful_gap_seconds: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -151,6 +153,7 @@ class SimulationResult:
                 "building_levels": self.state.building_levels,
                 "fixed_purchases": sorted(self.state.fixed_purchases),
             },
+            "max_meaningful_gap_seconds": self.max_meaningful_gap_seconds,
         }
 
 
@@ -197,6 +200,7 @@ def load_config(path: str) -> Config:
         "config",
         data,
         required={"schemaVersion", "tickSeconds", "maxSeconds", "manualAction", "worker", "buildings", "fixedPurchases"},
+        optional={"prestigeMultiplier"},
     )
 
     schema_version = data.get("schemaVersion")
@@ -307,6 +311,10 @@ def load_config(path: str) -> Config:
     if stops_after is not None and stops_after not in fixed:
         raise ConfigError(f"manualAction.stopsAfterPurchaseId '{stops_after}' не найден в fixedPurchases")
 
+    prestige_multiplier = 1.0
+    if "prestigeMultiplier" in data:
+        prestige_multiplier = _positive_number("prestigeMultiplier", data["prestigeMultiplier"])
+
     return Config(
         tick_seconds=tick_seconds,
         max_seconds=max_seconds,
@@ -324,6 +332,7 @@ def load_config(path: str) -> Config:
         ),
         buildings=buildings,
         fixed_purchases=fixed,
+        prestige_multiplier=prestige_multiplier,
     )
 
 
@@ -439,8 +448,24 @@ def _manual_triggered(manual: ManualActionConfig, tick_seconds: float, current_t
     return remainder < EPS or abs(manual.cooldown_seconds - remainder) < EPS
 
 
-def simulate(config: Config, plan: Plan) -> SimulationResult:
+MEANINGFUL_CATEGORIES = {"unlock", "visual", "mechanical"}
+
+
+def simulate(
+    config: Config,
+    plan: Plan,
+    *,
+    income_scale: float = 1.0,
+    production_multiplier: float = 1.0,
+) -> SimulationResult:
+    if income_scale <= 0:
+        raise ConfigError("income_scale должен быть положительным")
+    if production_multiplier <= 0:
+        raise ConfigError("production_multiplier должен быть положительным")
+
     _validate_plan_against_config(config, plan)
+
+    total_multiplier = income_scale * production_multiplier
 
     state = State(
         money=0.0,
@@ -463,11 +488,11 @@ def simulate(config: Config, plan: Plan) -> SimulationResult:
             break
 
         # 1. Пассивный доход от состояния на начало тика.
-        state.money += _passive_rate(config, state) * config.tick_seconds
+        state.money += _passive_rate(config, state) * config.tick_seconds * total_multiplier
 
         # 2. Ручное действие.
         if manual_active and _manual_triggered(config.manual_action, config.tick_seconds, current_time):
-            state.money += config.manual_action.yield_
+            state.money += config.manual_action.yield_ * total_multiplier
 
         # 3. Перевод времени.
         current_time += config.tick_seconds
@@ -549,11 +574,21 @@ def simulate(config: Config, plan: Plan) -> SimulationResult:
         if ended_run:
             break
 
+    max_gap = 0.0
+    last_meaningful_time = 0.0
+    for event in events:
+        if event.category in MEANINGFUL_CATEGORIES:
+            gap = event.time_seconds - last_meaningful_time
+            if gap > max_gap:
+                max_gap = gap
+            last_meaningful_time = event.time_seconds
+
     return SimulationResult(
         completed=completed,
         elapsed_seconds=current_time,
         events=events,
         state=state.copy(),
+        max_meaningful_gap_seconds=max_gap,
     )
 
 
@@ -579,16 +614,27 @@ def _render_event(event: PurchaseEvent) -> str:
     return " | ".join(parts)
 
 
-def run(config_path: str, plan_path: str) -> tuple[int, str]:
+def run(
+    config_path: str,
+    plan_path: str,
+    *,
+    income_scale: float = 1.0,
+    prestige: bool = False,
+) -> tuple[int, str]:
     try:
         config = load_config(config_path)
         plan = load_plan(plan_path)
-        result = simulate(config, plan)
+        production_multiplier = config.prestige_multiplier if prestige else 1.0
+        result = simulate(config, plan, income_scale=income_scale, production_multiplier=production_multiplier)
     except ConfigError as exc:
         return 2, f"ERROR | {exc}"
 
     lines = [_render_event(e) for e in result.events]
-    lines.append(f"SUMMARY | completed={str(result.completed).lower()} | elapsedSeconds={int(round(result.elapsed_seconds))}")
+    lines.append(
+        f"SUMMARY | completed={str(result.completed).lower()} "
+        f"| elapsedSeconds={int(round(result.elapsed_seconds))} "
+        f"| maxMeaningfulGapSeconds={int(round(result.max_meaningful_gap_seconds))}"
+    )
 
     # Успех — только если куплена покупка с endsRun=true.
     code = 0 if result.completed else 3
@@ -600,9 +646,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Симулятор баланса одного забега.")
     parser.add_argument("--config", required=True, help="Путь к JSON-конфигу")
     parser.add_argument("--plan", required=True, help="Путь к JSON-плану")
+    parser.add_argument("--income-scale", type=float, default=1.0, help="Множитель дохода (default: 1.0)")
+    parser.add_argument("--prestige", action="store_true", help="Использовать prestigeMultiplier из конфига")
     args = parser.parse_args(argv)
 
-    code, output = run(args.config, args.plan)
+    code, output = run(args.config, args.plan, income_scale=args.income_scale, prestige=args.prestige)
     print(output)
     return code
 

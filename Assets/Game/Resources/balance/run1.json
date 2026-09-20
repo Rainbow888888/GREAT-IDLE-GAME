@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "tickSeconds": 1,
+  "maxSeconds": 2400,
+  "prestigeMultiplier": 7.96,
+  "manualAction": { "yield": 0.694, "cooldownSeconds": 1, "stopsAfterPurchaseId": "auto_delivery" },
+  "worker": {
+    "id": "worker",
+    "baseCost": 30.46,
+    "costGrowth": 1.17,
+    "baseRate": 1.0,
+    "milestones": [
+      { "count": 5, "totalMultiplier": 1.5 },
+      { "count": 10, "totalMultiplier": 1.75 },
+      { "count": 20, "totalMultiplier": 2.0 }
+    ]
+  },
+  "buildings": [
+    {
+      "id": "salvage_rig",
+      "baseCost": 58.32,
+      "costGrowth": 2.4,
+      "baseOutput": 4.66,
+      "outputGrowth": 1.6,
+      "maxLevel": 6
+    },
+    {
+      "id": "crew_quarters",
+      "baseCost": 1767.72,
+      "costGrowth": 2.4,
+      "baseOutput": 4.64,
+      "outputGrowth": 1.6,
+      "maxLevel": 6
+    },
+    {
+      "id": "workshop",
+      "baseCost": 2335.0,
+      "costGrowth": 2.4,
+      "baseOutput": 4.82,
+      "outputGrowth": 1.6,
+      "maxLevel": 6
+    },
+    {
+      "id": "guard_post",
+      "baseCost": 5828.02,
+      "costGrowth": 2.4,
+      "baseOutput": 5.67,
+      "outputGrowth": 1.6,
+      "maxLevel": 6
+    }
+  ],
+  "fixedPurchases": [
+    { "id": "auto_delivery", "cost": 2159.29, "category": "mechanical", "endsRun": false },
+    { "id": "tool_boost", "cost": 2743.16, "category": "mechanical", "endsRun": false },
+    { "id": "ship_stirs", "cost": 10154.8, "category": "visual", "endsRun": false },
+    { "id": "base_expands", "cost": 1950.26, "category": "visual", "endsRun": false },
+    { "id": "first_threat", "cost": 15088.16, "category": "mechanical", "endsRun": false },
+    { "id": "hull_breach", "cost": 5242.77, "category": "mechanical", "endsRun": false },
+    { "id": "emp", "cost": 11857.7, "category": "mechanical", "endsRun": true }
+  ]
+}

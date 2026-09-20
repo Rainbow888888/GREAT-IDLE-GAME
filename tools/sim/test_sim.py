@@ -20,6 +20,10 @@ FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 SMOKE_CONFIG = os.path.join(FIXTURES, "smoke-config.json")
 SMOKE_PLAN = os.path.join(FIXTURES, "smoke-plan.json")
 SIM_PY = os.path.join(os.path.dirname(__file__), "sim.py")
+RUN1_CONFIG = os.path.join(
+    os.path.dirname(__file__), "..", "..", "Assets", "Game", "Resources", "balance", "run1.json"
+)
+RUN1_PLAN = os.path.join(os.path.dirname(__file__), "run1-plan.json")
 
 
 class TestBalanceFormulas(unittest.TestCase):
@@ -158,6 +162,69 @@ class TestCliRegressions(unittest.TestCase):
             self.assertEqual(proc.returncode, 3)
             self.assertIn("completed=false", proc.stdout)
             self.assertIn("00:10 | purchase | worker | count=1", proc.stdout)
+
+
+class TestRun1Balance(unittest.TestCase):
+    TARGET_WINDOWS = {
+        ("worker", "worker", None, 1): (20, 44),
+        ("building", "salvage_rig", 1, None): (90, 120),
+        ("building", "crew_quarters", 1, None): (210, 270),
+        ("building", "workshop", 1, None): (360, 420),
+        ("fixed", "auto_delivery", None, None): (420, 479),
+        ("fixed", "tool_boost", None, None): (510, 570),
+        ("fixed", "ship_stirs", None, None): (900, 960),
+        ("fixed", "base_expands", None, None): (1050, 1110),
+        ("building", "guard_post", 1, None): (1260, 1320),
+        ("fixed", "first_threat", None, None): (1470, 1530),
+        ("fixed", "hull_breach", None, None): (1620, 1740),
+        ("fixed", "emp", None, None): (1680, 2100),
+    }
+
+    def setUp(self) -> None:
+        self.config = load_config(RUN1_CONFIG)
+        self.plan = load_plan(RUN1_PLAN)
+
+    def test_run1_timeline_targets(self) -> None:
+        result = simulate(self.config, self.plan)
+        self.assertTrue(result.completed)
+        times = {
+            (e.kind, e.item_id, e.level, e.count): e.time_seconds
+            for e in result.events
+        }
+        for key, (lo, hi) in self.TARGET_WINDOWS.items():
+            t = times[key]
+            self.assertGreaterEqual(t, lo, f"{key} too early")
+            self.assertLessEqual(t, hi, f"{key} too late")
+
+    def test_run1_meaningful_gap_under_8_minutes(self) -> None:
+        result = simulate(self.config, self.plan)
+        self.assertLess(result.max_meaningful_gap_seconds, 480)
+
+        # routine-события не разрывают gap
+        meaningful = {"unlock", "visual", "mechanical"}
+        last = 0.0
+        max_gap = 0.0
+        for event in result.events:
+            if event.category in meaningful:
+                max_gap = max(max_gap, event.time_seconds - last)
+                last = event.time_seconds
+        self.assertEqual(result.max_meaningful_gap_seconds, max_gap)
+
+    def test_run1_income_sensitivity_is_monotonic(self) -> None:
+        baseline = simulate(self.config, self.plan)
+        low = simulate(self.config, self.plan, income_scale=0.9)
+        high = simulate(self.config, self.plan, income_scale=1.1)
+        self.assertTrue(baseline.completed and low.completed and high.completed)
+        self.assertGreater(low.elapsed_seconds, baseline.elapsed_seconds)
+        self.assertGreater(baseline.elapsed_seconds, high.elapsed_seconds)
+
+    def test_run1_prestige_repeat_between_4_and_6_minutes(self) -> None:
+        result = simulate(
+            self.config, self.plan, production_multiplier=self.config.prestige_multiplier
+        )
+        self.assertTrue(result.completed)
+        self.assertGreaterEqual(result.elapsed_seconds, 240)
+        self.assertLessEqual(result.elapsed_seconds, 360)
 
 
 if __name__ == "__main__":
