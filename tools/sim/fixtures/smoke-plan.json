@@ -1,0 +1,10 @@
+{
+  "steps": [
+    { "kind": "worker", "targetCount": 1, "category": "routine" },
+    { "kind": "building", "id": "rig", "targetLevel": 1, "category": "unlock" },
+    { "kind": "worker", "targetCount": 5, "category": "routine" },
+    { "kind": "fixed", "id": "auto_delivery" },
+    { "kind": "building", "id": "rig", "targetLevel": 2, "category": "visual" },
+    { "kind": "fixed", "id": "emp" }
+  ]
+}

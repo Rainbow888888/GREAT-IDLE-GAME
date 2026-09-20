@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "tickSeconds": 1,
+  "maxSeconds": 120,
+  "manualAction": { "yield": 1, "cooldownSeconds": 1, "stopsAfterPurchaseId": "auto_delivery" },
+  "worker": {
+    "id": "worker",
+    "baseCost": 10,
+    "costGrowth": 1.17,
+    "baseRate": 1,
+    "milestones": [
+      { "count": 5, "totalMultiplier": 1.5 },
+      { "count": 10, "totalMultiplier": 1.75 },
+      { "count": 20, "totalMultiplier": 2.0 }
+    ]
+  },
+  "buildings": [
+    {
+      "id": "rig",
+      "baseCost": 30,
+      "costGrowth": 2.4,
+      "baseOutput": 3,
+      "outputGrowth": 1.6,
+      "maxLevel": 2
+    }
+  ],
+  "fixedPurchases": [
+    { "id": "auto_delivery", "cost": 50, "category": "mechanical", "endsRun": false },
+    { "id": "emp", "cost": 100, "category": "mechanical", "endsRun": true }
+  ]
+}
