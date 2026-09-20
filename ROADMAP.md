@@ -58,6 +58,12 @@
 
 ## Этап 2 — Каркас Unity-проекта
 
+Этап разделён на две последовательные задачи:
+
+1. **S2.1 (текущая):** официальный 2D project shell в корне репозитория и один
+   EditMode-тест импорта `run1.json`;
+2. **S2.2:** URP, bootstrap-сцена, оставшиеся asmdef и воспроизводимая Windows build.
+
 - Unity `6000.3.24f1`, 2D URP, одна сцена, bootstrap менеджеров из кода.
 - Пакеты этапа: только нужные для 2D URP, TextMeshPro и Test Framework.
   Aseprite Importer и Pixel Perfect добавлять на этапе 6 только если выбран pixel art.
