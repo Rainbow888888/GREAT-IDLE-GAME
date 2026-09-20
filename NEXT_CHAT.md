@@ -18,7 +18,8 @@
 - Unity `6000.3.24f1` установлена по `O:\UNITY\6000.3.24f1\Editor\Unity.exe`.
 - Unity CLI `1.0.0-beta.10`; доступен шаблон `com.unity.template.2d`.
 - S2.1: Unity EditMode 1/1, Python 14/14; JSON читается через Resources/JsonUtility.
-- Rollback перед URP: локальный и удалённый HEAD `08e627e`.
+- Принятая база S2.1 сохранена в `08e627e`; работать нужно на актуальном `main`,
+  не переходя в detached HEAD.
 
 ## Зафиксированный цикл забега I
 
@@ -54,9 +55,10 @@ Kimi выполняет `docs/tasks/S2.2-urp-bootstrap-build.md`: точечно
 
 ```text
 Проект GREAT-IDLE-GAME, папка O:\AI\GREAT-IDLE-GAME.
-Выполни только docs/tasks/S2.2-urp-bootstrap-build.md. Сначала проверь preflight и
-rollback, затем выполняй package phase и setup phase раздельно. Запусти тесты, mutation-check
-и Windows build, покажи фактический diff и логи. Документы не меняй и не коммить.
+Выполни только docs/tasks/S2.2-urp-bootstrap-build.md на актуальной ветке main.
+Не делай checkout 08e627e: это историческая база S2.1, а не рабочий HEAD. Сначала
+проверь preflight, затем выполняй package phase и setup phase раздельно. Запусти тесты,
+mutation-check и Windows build, покажи фактический diff и логи. Не коммить.
 ```
 
 Название следующего чата: `🟡 S2.2 — первый запускаемый build`
