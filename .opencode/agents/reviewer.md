@@ -1,7 +1,7 @@
 ---
 description: Необязательный быстрый pre-review GREAT-IDLE-GAME. Только чтение, ничего не редактирует и не запускает.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode-go/kimi-k2.7-code
 temperature: 0.1
 permission:
   edit: deny

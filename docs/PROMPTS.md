@@ -1,6 +1,6 @@
 # Короткие стартовые промпты
 
-## Исполнитель Kimi
+## Исполнитель DeepSeek Pro
 
 ```text
 Проект GREAT-IDLE-GAME, папка O:\AI\GREAT-IDLE-GAME.
